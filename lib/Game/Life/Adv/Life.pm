@@ -74,6 +74,21 @@ sub process {
 	return $new_self;
 }
 
+sub surround {
+	my ($self, $level) = @_;
+	my $max   = $self->board->dims;
+	my $lives = [];
+	my $cursor = $self->position->clone;
+
+	$level ||= 1;
+
+	for my $dim ( 0 .. @{ $max } - 1 ) {
+		;
+	}
+
+	return $lives;
+}
+
 sub clone {
 	my ($self) = @_;
 
