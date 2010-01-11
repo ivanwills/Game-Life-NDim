@@ -1,6 +1,6 @@
-package Game::Life::Adv::Life;
+package Game::Life::Adv::Dim;
 
-# Created on: 2010-01-04 18:54:13
+# Created on: 2010-01-08 18:43:32
 # Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
@@ -13,77 +13,62 @@ use Carp;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 
-use overload '""' => \&to_string;
+use overload
+	'""'  => sub { '[' . ( join ',', @{ $_[0]->elements } ) . ']' },
+	'@{}' => sub { $_[0]->elements };
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
 
-has type => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => 0,
-);
-
-has board => (
+has elements => (
 	is       => 'rw',
-	isa      => 'Game::Life::Adv::Board',
+	isa      => 'ArrayRef',
 	required => 1,
 );
 
-has position => (
-	is  => 'rw',
-	isa => 'Game::Life::Adv::Dim',
-	required => 1,
-);
+around new => sub {
+	my ($new, $class, @args) = @_;
 
-sub seed {
-	my ($self, $types) = @_;
-	my $new_type;
-
-	TYPE:
-	while (!defined $new_type) {
-		for my $type (keys %{$types}) {
-			if ( rand() < $types->{$type} ) {
-				$new_type = $type;
-				last TYPE;
-			}
-		}
+	if ( @args == 1 && ref $args[0] eq 'ARRAY' ) {
+		@args = ( elements => $args[0] );
 	}
 
-	$self->type($new_type);
+	return $new->($class, @args);
+};
+
+sub increment {
+	my ($self, $max) = @_;
+	my $last;
+
+	for my $i ( reverse 0 .. @{ $max } - 1 ) {
+		if ( $self->[$i] + 1 < $max->[$i] ) {
+			$self->[$i]++;
+			$last = $i;
+			last;
+		}
+		$self->[$i] = 0;
+	}
+
+	return undef if !defined $last;
 
 	return $self;
-}
-
-sub process {
-	my ($self, $rules) = @_;
-
-	my $new_self = $self->clone;
-
-	RULE:
-	for my $rule (@{ $rules } ) {
-		my $change = $rule->($self);
-		next RULE if !defined $change;
-
-		$new_self->type($change);
-		last RULE;
-	}
-
-	return $new_self;
 }
 
 sub clone {
 	my ($self) = @_;
 
-	return __PACKAGE__->new(type => $self->type, board => $self->board, position => $self->position);
+	return $self->new(elements => [ @{ $self } ]);
 }
 
-sub to_string {
+sub zero {
 	my ($self) = @_;
 
-	return $self->type;
+	for my $item (@{ $self }) {
+		$item = 0;
+	}
+
+	return $self;
 }
 
 1;
@@ -92,16 +77,16 @@ __END__
 
 =head1 NAME
 
-Game::Life::Adv::Life - <One-line description of module's purpose>
+Game::Life::Adv::Dim - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to Game::Life::Adv::Life version 0.1.
+This documentation refers to Game::Life::Adv::Dim version 0.1.
 
 
 =head1 SYNOPSIS
 
-   use Game::Life::Adv::Life;
+   use Game::Life::Adv::Dim;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as

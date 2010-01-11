@@ -1,111 +1,101 @@
-package Game::Life::Adv::Life;
+#!/usr/bin/perl
 
-# Created on: 2010-01-04 18:54:13
+# Created on: 2010-01-04 22:09:35
 # Create by:  Ivan Wills
 # $Id$
 # $Revision$, $HeadURL$, $Date$
 # $Revision$, $Source$, $Date$
 
-use Moose;
+use strict;
 use warnings;
 use version;
-use Carp;
+use Scalar::Util;
+use List::Util;
+#use List::MoreUtils;
+use Getopt::Long;
+use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
+use FindBin qw/$Bin/;
+use Game::Life::Adv qw/game_of_life/;
 
-use overload '""' => \&to_string;
+our $VERSION = version->new('0.0.1');
+my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
-our $VERSION     = version->new('0.0.1');
-our @EXPORT_OK   = qw//;
-our %EXPORT_TAGS = ();
-#our @EXPORT      = qw//;
-
-has type => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => 0,
+my %option = (
+	out     => undef,
+	verbose => 0,
+	man     => 0,
+	help    => 0,
+	VERSION => 0,
 );
 
-has board => (
-	is       => 'rw',
-	isa      => 'Game::Life::Adv::Board',
-	required => 1,
-);
+if ( !@ARGV ) {
+	pod2usage( -verbose => 1 );
+}
 
-has position => (
-	is  => 'rw',
-	isa => 'Game::Life::Adv::Dim',
-	required => 1,
-);
+main();
+exit 0;
 
-sub seed {
-	my ($self, $types) = @_;
-	my $new_type;
+sub main {
 
-	TYPE:
-	while (!defined $new_type) {
-		for my $type (keys %{$types}) {
-			if ( rand() < $types->{$type} ) {
-				$new_type = $type;
-				last TYPE;
-			}
-		}
+	Getopt::Long::Configure('bundling');
+	GetOptions(
+		\%option,
+		'out|o=s',
+		'verbose|v+',
+		'man',
+		'help',
+		'VERSION!',
+	) or pod2usage(2);
+
+	if ( $option{'VERSION'} ) {
+		print "$name Version = $VERSION\n";
+		exit 1;
+	}
+	elsif ( $option{'man'} ) {
+		pod2usage( -verbose => 2 );
+	}
+	elsif ( $option{'help'} ) {
+		pod2usage( -verbose => 1 );
 	}
 
-	$self->type($new_type);
+	# do stuff here
+	my $gof = Game::Life::Adv::game_of_life(dims => \@ARGV, rand => 1);
+	my $count = 0;
 
-	return $self;
-}
+	print "$gof\n";
 
-sub process {
-	my ($self, $rules) = @_;
-
-	my $new_self = $self->clone;
-
-	RULE:
-	for my $rule (@{ $rules } ) {
-		my $change = $rule->($self);
-		next RULE if !defined $change;
-
-		$new_self->type($change);
-		last RULE;
+	while ($gof->process && $count++ < 2) {
+		print "$gof\n";
+#		die Dumper $gof->board->items;
 	}
 
-	return $new_self;
+	return;
 }
 
-sub clone {
-	my ($self) = @_;
-
-	return __PACKAGE__->new(type => $self->type, board => $self->board, position => $self->position);
-}
-
-sub to_string {
-	my ($self) = @_;
-
-	return $self->type;
-}
-
-1;
-
-__END__
+__DATA__
 
 =head1 NAME
 
-Game::Life::Adv::Life - <One-line description of module's purpose>
+example/simple - <One-line description of commands purpose>
 
 =head1 VERSION
 
-This documentation refers to Game::Life::Adv::Life version 0.1.
-
+This documentation refers to example/simple version 0.1.
 
 =head1 SYNOPSIS
 
-   use Game::Life::Adv::Life;
+   example/simple [option]
 
-   # Brief but working code example(s) here showing the most common usage(s)
-   # This section will be as far as many users bother reading, so make it as
-   # educational and exemplary as possible.
+ OPTIONS:
+  -o --other         other option
+
+  -v --verbose       Show more detailed option
+     --version       Prints the version information
+     --help          Prints this help information
+     --man           Prints the full documentation for example/simple
+
 
 
 =head1 DESCRIPTION
@@ -128,9 +118,6 @@ Name the section accordingly.
 In an object-oriented module, this section should begin with a sentence (of the
 form "An object of this class represents ...") to give the reader a high-level
 context to help them understand the methods that are subsequently described.
-
-
-
 
 =head1 DIAGNOSTICS
 
@@ -180,7 +167,6 @@ Patches are welcome.
 =head1 AUTHOR
 
 Ivan Wills - (ivan.wills@gmail.com)
-<Author name(s)>  (<contact address>)
 
 =head1 LICENSE AND COPYRIGHT
 

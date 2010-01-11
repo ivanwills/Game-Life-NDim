@@ -1,110 +1,141 @@
 package Game::Life::Adv;
 
+# Created on: 2010-01-04 18:52:01
+# Create by:  Ivan Wills
+# $Id$
+# $Revision$, $HeadURL$, $Date$
+# $Revision$, $Source$, $Date$
+
+use Moose;
 use warnings;
-use strict;
+use version;
+use Carp;
+use Scalar::Util;
+use List::Util;
+#use List::MoreUtils;
+use Data::Dumper qw/Dumper/;
+use English qw/ -no_match_vars /;
+use Game::Life::Adv::Board;
+
+use overload '""' => \&to_string;
+
+our $VERSION     = version->new('0.0.1');
+our @EXPORT_OK   = qw/game_of_life/;
+our %EXPORT_TAGS = ();
+
+has board => (
+	is       => 'rw',
+	isa      => 'Game::Life::Adv::Board',
+	required => 1,
+);
+
+has rules => (
+	is       => 'rw',
+	isa      => 'ArrayRef',
+	default  => sub {[]},
+);
+
+sub game_of_life {
+	my %params = @_;
+
+	my $board = Game::Life::Adv::Board->new(%params);
+	my %new = (board => $board);
+	$new{types} = $params{types} if $params{types};
+
+	return __PACKAGE__->new(%new);
+}
+
+sub add_rule {
+	my ($self, $sub, %rule) = @_ == 1 ? @_ : (shift @_, undef, @_);
+
+	if ( defined $sub ) {
+		push @{ $self->rules }, $sub;
+	}
+	else {
+		for my $rule (keys %rule) {
+			push @{ $self->rules },
+				  $rule eq 'live' ? sub { sum $_[0]->surround > $rule{$rule} ? 1 : undef }
+				: $rule eq 'die'  ? sub { sum $_[0]->surround < $rule{$rule} ? 0 : undef }
+				:                   die "The rule "$rule" is unknown\n";
+	}
+
+	return $self;
+}
+
+sub process {
+	my ($self) = @_;
+
+	while ( my $life = $self->board->next_life() ) {
+		my $new = $life->process($self->rules);
+		$self->board->set_life($new);
+	}
+
+	return $self;
+}
+
+sub to_string {
+	my ($self) = @_;
+
+	return $self->board->to_string();
+}
+
+1;
+
+__END__
 
 =head1 NAME
 
-Game::Life::Adv - The great new Game::Life::Adv!
+Game::Life::Adv - Infrastructure for playing Conway's game of life with
+support for multiple cell types and 2D or 3D boards.
 
 =head1 VERSION
 
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
-
+This documentation refers to Game::Life::Adv version 0.1.
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+   use Game::Life::Adv;
 
-Perhaps a little code snippet.
+   # Brief but working code example(s) here showing the most common usage(s)
+   # This section will be as far as many users bother reading, so make it as
+   # educational and exemplary as possible.
 
-    use Game::Life::Adv;
 
-    my $foo = Game::Life::Adv->new();
-    ...
+=head1 DESCRIPTION
 
-=head1 EXPORT
+TODO
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=head1 SUBROUTINES/METHODS
 
-=head1 FUNCTIONS
+=head1 DIAGNOSTICS
 
-=head2 function1
+=head1 CONFIGURATION AND ENVIRONMENT
 
-=cut
+=head1 DEPENDENCIES
 
-sub function1 {
-}
+=head1 INCOMPATIBILITIES
 
-=head2 function2
+=head1 BUGS AND LIMITATIONS
 
-=cut
+There are no known bugs in this module.
 
-sub function2 {
-}
+Please report problems to Ivan Wills (ivan.wills@gmail.com).
+
+Patches are welcome.
 
 =head1 AUTHOR
 
-Ivan Wills, C<< <ivan.wills at gmail.com> >>
+Ivan Wills - (ivan.wills@gmail.com)
 
-=head1 BUGS
+=head1 LICENSE AND COPYRIGHT
 
-Please report any bugs or feature requests to C<bug-game-life-adv at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Game-Life-Adv>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+Copyright (c) 2010 Ivan Wills (14 Mullion Close, Hornsby Heights, NSW Australia 2077).
+All rights reserved.
 
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Game::Life::Adv
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Game-Life-Adv>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Game-Life-Adv>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Game-Life-Adv>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Game-Life-Adv/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2010 Ivan Wills.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
+This module is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself. See L<perlartistic>.  This program is
+distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
 
 =cut
-
-1; # End of Game::Life::Adv
