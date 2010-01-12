@@ -64,7 +64,7 @@ sub increment {
 		$self->[$i] = 0;
 	}
 
-	return undef if !defined $last;
+	return if !defined $last;
 
 	return $self;
 }

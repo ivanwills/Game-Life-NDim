@@ -140,7 +140,7 @@ sub next_life {
 	my ($self) = @_;
 	my $max_dim;
 
-	return undef if !$self->cursor->increment($self->dims);
+	return if !$self->cursor->increment($self->dims);
 
 	my $life = $self->items;
 

@@ -28,5 +28,5 @@ $dim->increment($max);
 $dim->increment($max);
 $dim->increment($max);
 is_deeply($dim->increment($max)->elements, $max, 'now equal the $max');
-is_deeply($dim->increment($max), undef , 'finish increment');
+is_deeply(scalar $dim->increment($max), undef, 'finish increment');
 
