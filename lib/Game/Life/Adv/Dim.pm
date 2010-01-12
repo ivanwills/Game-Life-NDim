@@ -27,11 +27,24 @@ has elements => (
 	required => 1,
 );
 
+has max => (
+	is       => 'rw',
+	isa      => 'ArrayRef[Int]',
+	weak_ref => 1,
+);
+
 around new => sub {
 	my ($new, $class, @args) = @_;
 
 	if ( @args == 1 && ref $args[0] eq 'ARRAY' ) {
 		@args = ( elements => $args[0] );
+	}
+	else {
+		my %params = @args;
+		if (!exists $params{elements} && exists $params{max}) {
+			$params{elements} = [ @{ $params{max} } ];
+			return $new->($class, %params)->zero;
+		}
 	}
 
 	return $new->($class, @args);
@@ -42,7 +55,8 @@ sub increment {
 	my $last;
 
 	for my $i ( reverse 0 .. @{ $max } - 1 ) {
-		if ( $self->[$i] + 1 < $max->[$i] ) {
+		die "max[$i] == 0 which is not allowed!" if $max->[$i] == 0;
+		if ( $self->[$i] + 1 <= $max->[$i] ) {
 			$self->[$i]++;
 			$last = $i;
 			last;

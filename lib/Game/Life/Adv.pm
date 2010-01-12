@@ -56,7 +56,8 @@ sub add_rule {
 			push @{ $self->rules },
 				  $rule eq 'live' ? sub { sum $_[0]->surround > $rule{$rule} ? 1 : undef }
 				: $rule eq 'die'  ? sub { sum $_[0]->surround < $rule{$rule} ? 0 : undef }
-				:                   die "The rule "$rule" is unknown\n";
+				:                   die "The rule \"$rule\" is unknown\n";
+		}
 	}
 
 	return $self;
