@@ -1,0 +1,5 @@
+.*.sw[po]
+.git
+Debian_CPANTS.txt
+vim.sh
+
