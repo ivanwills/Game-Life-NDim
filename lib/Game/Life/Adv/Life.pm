@@ -30,6 +30,7 @@ has board => (
 	is       => 'rw',
 	isa      => 'Game::Life::Adv::Board',
 	required => 1,
+	weak_ref => 1,
 );
 
 has position => (
@@ -132,19 +133,15 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head1 SUBROUTINES/METHODS
 
-A separate section listing the public components of the module's interface.
+=head2 C<seed (  )>
 
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
+=head2 C<process (  )>
 
-Name the section accordingly.
+=head2 C<surround (  )>
 
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+=head2 C<clone (  )>
 
-
+=head2 C<to_string (  )>
 
 
 =head1 DIAGNOSTICS

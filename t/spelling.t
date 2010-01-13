@@ -29,5 +29,8 @@ add_stopwords(qw/
 	Hornsby
 	NSW
 	TODO
+	Param
+	ie
+	Exportable
 /);
 all_pod_files_spelling_ok();

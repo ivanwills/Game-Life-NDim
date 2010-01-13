@@ -108,6 +108,28 @@ TODO
 
 =head1 SUBROUTINES/METHODS
 
+=head2 Exportable Functions
+
+=head2 C<game_of_life ( %params )>
+
+=head2 Class Methods
+
+=head3 C<new ( %params )>
+
+Param: C<dims> - array of ints - The dimensions of the game (in zero based form ie [1,1] for a 2x2 board
+
+Param: C<rand> - bool - If true sets the board with random life types
+
+Param: C<types> - hash ref - List of types (keys) and their relative likely hood to be found default {0=> ,1=> }
+
+=head2 Object Methods
+
+=head3 C<add_rule ( )>
+
+=head3 C<process ()>
+
+=head3 C<to_string ()>
+
 =head1 DIAGNOSTICS
 
 =head1 CONFIGURATION AND ENVIRONMENT

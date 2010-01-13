@@ -191,8 +191,8 @@ sub to_string {
 	$self->reset;
 	my $i = 0;
 	while (ref (my $life = $self->next_life()) ) {
-		$out .= $life . $spacer;
-		$out .= "\n" if $self->cursor->[-1] == $self->dims->[-1] - 1;
+		$out .= $life;
+		$out .= $self->cursor->[-1] == $self->dims->[-1] ? "\n" : $spacer;
 		$i++;
 	}
 	$self->reset;
@@ -232,20 +232,17 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head1 SUBROUTINES/METHODS
 
-A separate section listing the public components of the module's interface.
+=head2 C<seed (  )>
 
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module
-provides.
+=head2 C<reset (  )>
 
-Name the section accordingly.
+=head2 C<next_life (  )>
 
-In an object-oriented module, this section should begin with a sentence (of the
-form "An object of this class represents ...") to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+=head2 C<set_life (  )>
 
+=head2 C<to_string (  )>
 
-
+=head2 C<_build_items (  )>
 
 =head1 DIAGNOSTICS
 

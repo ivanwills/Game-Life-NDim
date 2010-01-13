@@ -61,10 +61,10 @@ sub main {
 	}
 
 	# do stuff here
-	my $gof = Game::Life::Adv::game_of_life(dims => \@ARGV, rand => 1);
+	my $gof = Game::Life::Adv::game_of_life(dims => [ grep { $_ - 1 } @ARGV ], rand => 1);
 	my $count = 0;
 
-	print "$gof\n";
+	print "--$gof++\n";
 
 	while ($gof->process && $count++ < 2) {
 		print "$gof\n";
