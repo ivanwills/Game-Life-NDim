@@ -10,7 +10,7 @@ use Moose;
 use warnings;
 use feature qw/:5.10/;
 use version;
-use Carp qw/cluck/;
+use Carp qw/croak cluck/;
 use List::Util qw/max/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
@@ -45,6 +45,12 @@ has types => (
 	is       => 'rw',
 	isa     => 'HashRef',
 	default => sub {{ 0 => 0.6, 1 => 0.4 }},
+);
+
+has wrap => (
+	is       => 'rw',
+	isa     => 'Bool',
+	default => 0,
 );
 
 has verbose => (
@@ -180,6 +186,22 @@ sub set_life {
 	return $self;
 }
 
+sub get_life {
+	my ($self, $position) = @_;
+
+	my $item = $self->items;
+	my $min  = $self->wrap ? -1 : 0;
+	die 'no wrap' if !$self->wrap;
+	die if !$min;
+
+	for my $i (@{ $position } ) {
+		croak "Cannot get game position from $position $i >= $min " if $i < $min || !exists $item->[$i];
+		$item = $item->[$i];
+	}
+
+	return $item;
+}
+
 sub to_string {
 	my ($self) = @_;
 
@@ -190,7 +212,7 @@ sub to_string {
 	my $out = '';
 	$self->reset;
 	my $i = 0;
-	while (ref (my $life = $self->next_life()) ) {
+	while ( ref ( my $life = $self->next_life() ) ) {
 		$out .= $life;
 		$out .= $self->cursor->[-1] == $self->dims->[-1] ? "\n" : $spacer;
 		$i++;
@@ -237,6 +259,8 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 =head2 C<reset (  )>
 
 =head2 C<next_life (  )>
+
+=head2 C<get_life (  )>
 
 =head2 C<set_life (  )>
 

@@ -12,6 +12,7 @@ use version;
 use Carp;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
+use List::Util qw/sum max min/;
 
 use overload '""' => \&to_string;
 
@@ -24,6 +25,11 @@ has type => (
 	is      => 'rw',
 	isa     => 'Str',
 	default => 0,
+);
+
+has next_type => (
+	is      => 'rw',
+	isa     => 'Str',
 );
 
 has board => (
@@ -58,36 +64,94 @@ sub seed {
 	return $self;
 }
 
+# process
 sub process {
 	my ($self, $rules) = @_;
 
-	my $new_self = $self->clone;
+	$self->next_type($self->type);
 
+	# process the rules in order until a rule is found that returns a type to
+	# change too, rules that maintain status quoe return undef
 	RULE:
 	for my $rule (@{ $rules } ) {
 		my $change = $rule->($self);
+
+		# next if status quoe
 		next RULE if !defined $change;
 
-		$new_self->type($change);
+		# stage the changed type
+		$self->next_type($change);
 		last RULE;
 	}
 
-	return $new_self;
+	return $self;
+}
+
+sub set {
+	my ($self) = @_;
+
+	$self->type($self->next_type);
+
+	return $self;
 }
 
 sub surround {
 	my ($self, $level) = @_;
 	my $max   = $self->board->dims;
-	my $lives = [];
+	my @lives;
 	my $cursor = $self->position->clone;
 
 	$level ||= 1;
+	my $itter = $self->transformer;
 
-	for my $dim ( 0 .. @{ $max } - 1 ) {
-		;
+	while (my $transform = $itter->()) {
+		my $life = eval{ $self->board->get_life($self->position + $transform) };
+		if (!$EVAL_ERROR) {
+			push @lives, $life;
+		}
+		else { warn "Error: $EVAL_ERROR\n"; }
 	}
 
-	return $lives;
+	return \@lives;
+}
+
+sub transformer {
+	my ($self) = @_;
+	my @max    = @{ $self->board->dims };
+	my $max    = @max - 1;
+	my @transform;
+	my @alter;
+	for (0 .. $max) {
+		push @transform, -1;
+	}
+	my $point;
+
+	my $itter;
+	$itter = sub {
+		if (!defined $point) {
+			$point = 0;
+			return [@transform];
+		}
+
+		my $done = 0;
+		while (!$done) {
+			if ($transform[$point] + 1 <= 1) {
+				$transform[$point]++;
+				$done = 1;
+				$point = 0;
+				last;
+			}
+			$transform[$point] = -1;
+			$point++;
+			return undef if !exists $transform[$point];
+		}
+
+		return $itter->() if ($max + 1 == (grep {$_ == 0} @transform));
+
+		return [@transform];
+	};
+
+	return $itter;
 }
 
 sub clone {
@@ -137,7 +201,11 @@ May include numerous subsections (i.e., =head2, =head3, etc.).
 
 =head2 C<process (  )>
 
+=head2 C<set (  )>
+
 =head2 C<surround (  )>
+
+=head2 C<transformer (  )>
 
 =head2 C<clone (  )>
 

@@ -15,7 +15,9 @@ use English qw/ -no_match_vars /;
 
 use overload
 	'""'  => sub { '[' . ( join ',', @{ $_[0]->elements } ) . ']' },
-	'@{}' => sub { $_[0]->elements };
+	'@{}' => sub { $_[0]->elements },
+	'=='  => sub { for (0..@{$_->[0]}-1) { return 0 if $_[0][$_] != $_[1][$_] } return 1 },
+	'+'   => \&sum_list;
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
@@ -83,6 +85,18 @@ sub zero {
 	}
 
 	return $self;
+}
+
+sub sum_list {
+	my ($self, $list) = @_;
+
+	my @new;
+	for my $i ( 0 .. @{ $self } - 1 ) {
+		die Dumper $i, $self, $list if !defined $self->[$i] || !defined $list->[$i];
+		$new[$i] = $self->[$i] + $list->[$i];
+	}
+
+	return __PACKAGE__->new(\@new);
 }
 
 1;

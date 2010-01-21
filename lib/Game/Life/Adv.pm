@@ -11,7 +11,7 @@ use warnings;
 use version;
 use Carp;
 use Scalar::Util;
-use List::Util;
+use List::Util qw/sum/;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
@@ -39,6 +39,8 @@ sub game_of_life {
 	my %params = @_;
 
 	my $board = Game::Life::Adv::Board->new(%params);
+	die Dumper \%params, $board if $params{wrap} && !$board->wrap;
+	die Dumper \%params if !$board->wrap;
 	my %new = (board => $board);
 	$new{types} = $params{types} if $params{types};
 
@@ -46,16 +48,18 @@ sub game_of_life {
 }
 
 sub add_rule {
-	my ($self, $sub, %rule) = @_ == 1 ? @_ : (shift @_, undef, @_);
+	my ($self, @rules) = @_;
 
-	if ( defined $sub ) {
-		push @{ $self->rules }, $sub;
-	}
-	else {
-		for my $rule (keys %rule) {
+	while (@rules) {
+		my $rule = shift @rules;
+		if (ref $rule eq 'CODE') {
+			push @{ $self->rules }, $rule;
+		}
+		else {
+			my $value = shift @rules;
 			push @{ $self->rules },
-				  $rule eq 'live' ? sub { sum $_[0]->surround > $rule{$rule} ? 1 : undef }
-				: $rule eq 'die'  ? sub { sum $_[0]->surround < $rule{$rule} ? 0 : undef }
+				  $rule eq 'live' ? sub {  $_[0] ? undef : ( sum $_[0]->surround ) > $value ? 1 : undef }
+				: $rule eq 'die'  ? sub { !$_[0] ? undef : ( sum $_[0]->surround ) < $value ? 0 : undef }
 				:                   die "The rule \"$rule\" is unknown\n";
 		}
 	}
@@ -66,9 +70,18 @@ sub add_rule {
 sub process {
 	my ($self) = @_;
 
-	while ( my $life = $self->board->next_life() ) {
-		my $new = $life->process($self->rules);
-		$self->board->set_life($new);
+	while ( defined ( my $life = $self->board->next_life() ) ) {
+		$life->process($self->rules);
+	}
+
+	return $self;
+}
+
+sub set {
+	my ($self) = @_;
+
+	while ( defined ( my $life = $self->board->next_life() ) ) {
+		$life->set();
 	}
 
 	return $self;
@@ -127,6 +140,8 @@ Param: C<types> - hash ref - List of types (keys) and their relative likely hood
 =head3 C<add_rule ( )>
 
 =head3 C<process ()>
+
+=head3 C<set ()>
 
 =head3 C<to_string ()>
 
