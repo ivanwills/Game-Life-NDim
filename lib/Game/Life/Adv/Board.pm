@@ -205,19 +205,44 @@ sub get_life {
 sub to_string {
 	my ($self) = @_;
 
-	die "The dimension of this game is to large to sensibly convert to a string\n" if @{ $self->dims } > 2;
+	die "The dimension of this game is to large to sensibly convert to a string\n" if @{ $self->dims } > 3;
 
 	my $spacer = ( 10 >= max (@{$self->dims}, scalar @{$self->dims}) ) ? ' ' : '';
 
 	my $out = '';
+	my @outs;
 	$self->reset;
 	my $i = 0;
+	my $level = 0;
 	while ( ref ( my $life = $self->next_life() ) ) {
+		if ( @{$self->cursor} > 2 && $self->cursor->[0] != $level) {
+			$out .= "\n";
+			$level = $self->cursor->[0];
+			push @outs, $out;
+			$out = '';
+		}
 		$out .= $life;
 		$out .= $self->cursor->[-1] == $self->dims->[-1] ? "\n" : $spacer;
 		$i++;
 	}
 	$self->reset;
+
+	if (@outs) {
+		$out .= "\n";
+		$level = $self->cursor->[0];
+		push @outs, $out;
+		$out = '';
+		my @lines;
+		for my $level (@outs) {
+			my $i = 0;
+			for my $line (split /\n/, $level) {
+				$lines[$i] ||= '';
+				$lines[$i] .= "    $line";
+				$i++;
+			}
+		}
+		return join "\n", @lines, '';
+	}
 
 	#return "Board:\n" . $out . "\nCount = $i\n";
 	return $out;
