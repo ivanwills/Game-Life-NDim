@@ -9,9 +9,7 @@
 use strict;
 use warnings;
 use version;
-use Scalar::Util;
-use List::Util;
-#use List::MoreUtils;
+use List::Util qw/sum/;
 use Getopt::Long;
 use Pod::Usage;
 use Data::Dumper qw/Dumper/;
@@ -23,7 +21,9 @@ our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
-	out     => undef,
+	max     => 10,
+	live    => 5,
+	die     => 1,
 	verbose => 0,
 	man     => 0,
 	help    => 0,
@@ -42,7 +42,10 @@ sub main {
 	Getopt::Long::Configure('bundling');
 	GetOptions(
 		\%option,
-		'out|o=s',
+		'live|l=i',
+		'die|d=i',
+		'max|m=i',
+		'wrap|w',
 		'verbose|v+',
 		'man',
 		'help',
@@ -61,14 +64,62 @@ sub main {
 	}
 
 	# do stuff here
-	my $gof = Game::Life::Adv::game_of_life(dims => [ grep { $_ - 1 } @ARGV ], rand => 1);
+	my $dim = [ map { $_ - 1 } @ARGV ];
+	my $gof = Game::Life::Adv::game_of_life(
+		dims => $dim,
+		rand => 1,
+		wrap => $option{wrap},
+	);
 	my $count = 0;
 
-	print "--$gof++\n";
+	$gof->add_rule(
+		sub {
+			my $sub = sum $_[0]->surround;
+			if ("$_[0]" eq '1') {
+				return
+					  $sub == 0 ? undef
+					: $sub == 1 ? undef
+					: $sub == 2 ? undef
+					: $sub == 3 ? undef
+					: $sub == 4 ? undef
+					: $sub == 5 ? undef
+					: $sub == 6 ? 0
+					: $sub == 7 ? 0
+					: $sub == 8 ? 0
+					: $sub == 9 ? 0
+					:             undef;
+			}
+			else {
+				return
+					  $sub == 0 ? undef
+					: $sub == 1 ? undef
+					: $sub == 2 ? undef
+					: $sub == 3 ? 1
+					: $sub == 4 ? 1
+					: $sub == 5 ? 1
+					: $sub == 6 ? 1
+					: $sub == 7 ? 1
+					: $sub == 8 ? 1
+					: $sub == 9 ? 1
+					:             undef;
+			}
+		},
+		#live => 5,
+		#die  => 1,
+	);
 
-	while ($gof->process && $count++ < 2) {
-		print "$gof\n";
+	my $last = "$gof\n";
+	print $last;
+	sleep 1;
+
+	while ( $count++ < $option{max} && $gof->process ) {
+		$gof->set;
+		my $cur = "$gof\n";
+		die "Static game\n" if $cur eq $last;
+		print $cur;
+		$last = $cur;
 #		die Dumper $gof->board->items;
+		sleep 1;
 	}
 
 	return;
