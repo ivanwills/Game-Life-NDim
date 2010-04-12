@@ -17,11 +17,13 @@ type();
 transform();
 
 sub type {
+	diag "type";
 	is($life->type, 0, 'Type is 0');
 	is("$life", 0, 'Stringified is 0');
 }
 
 sub transform {
+	diag "transform";
 	my $gof = Game::Life::Adv::game_of_life(dims => [9, 9, 9], rand => 1);
 	my $life = Game::Life::Adv::Life->new( board => $gof->board, type => 0, position => Game::Life::Adv::Dim->new([0,0,0]) );
 

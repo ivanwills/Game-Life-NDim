@@ -143,7 +143,8 @@ sub transformer {
 			}
 			$transform[$point] = -1;
 			$point++;
-			return undef if !exists $transform[$point];
+			my $undef;
+			return $undef if !exists $transform[$point];
 		}
 
 		return $itter->() if ($max + 1 == (grep {$_ == 0} @transform));

@@ -39,8 +39,7 @@ sub game_of_life {
 	my %params = @_;
 
 	my $board = Game::Life::Adv::Board->new(%params);
-	die Dumper \%params, $board if $params{wrap} && !$board->wrap;
-	die Dumper \%params if !$board->wrap;
+	die "Where's my wrap? " . Dumper \%params, $board if $params{wrap} && !$board->wrap;
 	my %new = (board => $board);
 	$new{types} = $params{types} if $params{types};
 

@@ -5,7 +5,7 @@ BEGIN { $ENV{TESTING} = 1 }
 use strict;
 use warnings;
 use Test::More tests => 5 + 11 + 1;
-#use Test::NoWarnings;
+use Test::NoWarnings;
 use Test::Warn;
 
 use Game::Life::Adv::Board;
@@ -14,10 +14,12 @@ my $board = Game::Life::Adv::Board->new( dims => Game::Life::Adv::Dim->new([1,1]
 
 stringify();
 looping();
-get_life();
 surround();
+get_life();
+diag "end";
 
 sub looping {
+	diag 'looping';
 	my $count = 0;
 	$board->reset;
 
@@ -27,26 +29,29 @@ sub looping {
 }
 
 sub stringify {
+	diag 'stringify';
 	is("$board", "0 0\n0 0\n", "Stringify");
 }
 
 sub surround {
+	diag 'surround';
 	my $board = Game::Life::Adv::Board->new( dims => Game::Life::Adv::Dim->new([9]) );
 	my $life  = $board->get_life([5]);
-	is((scalar $life->surround), 2, "1D is surrounded by 2 cells");
+	is((scalar @{ $life->surround }), 2, "1D is surrounded by 2 cells");
 
 	$board = Game::Life::Adv::Board->new( dims => Game::Life::Adv::Dim->new([9, 9]) );
 	$life  = $board->get_life([5, 5]);
-	is((scalar $life->surround), 8, "2D is surrounded by 8 cells");
+	is((scalar @{ $life->surround }), 8, "2D is surrounded by 8 cells");
 
 	$board = Game::Life::Adv::Board->new( dims => Game::Life::Adv::Dim->new([9, 9, 9]) );
 	$life  = $board->get_life([5, 5, 5]);
-	is((scalar $life->surround), 26, "3D is surrounded by 26 cells");
+	is((scalar @{ $life->surround }), 26, "3D is surrounded by 26 cells");
 
 	# general formula surrounding cells = n^3 - 1
 }
 
 sub get_life {
+	diag 'get_life';
 	my $board = Game::Life::Adv::Board->new( dims => Game::Life::Adv::Dim->new([9,9]) );
 
 	is_deeply($board->get_life([0,0]), $board->items->[0][0], '');

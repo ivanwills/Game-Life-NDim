@@ -191,8 +191,7 @@ sub get_life {
 
 	my $item = $self->items;
 	my $min  = $self->wrap ? -1 : 0;
-	die 'no wrap' if !$self->wrap;
-	die if !$min;
+	die if !defined $min;
 
 	for my $i (@{ $position } ) {
 		croak "Cannot get game position from $position $i >= $min " if $i < $min || !exists $item->[$i];
