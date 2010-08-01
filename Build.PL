@@ -21,7 +21,7 @@ my $builder = Module::Build->new(
 	create_license     => 1,
 	meta_merge         => {
 		resources => {
-			repository => 'git://github.com/ivanwills/Game-Life-Adv.git',
+			repository => 'http://github.com/ivanwills/Game-Life-Adv',
 			bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Game-Life-Adv',
 		},
 	},
