@@ -24,72 +24,72 @@ our @EXPORT_OK   = qw/game_of_life/;
 our %EXPORT_TAGS = ();
 
 has board => (
-	is       => 'rw',
-	isa      => 'Game::Life::Adv::Board',
-	required => 1,
+    is       => 'rw',
+    isa      => 'Game::Life::Adv::Board',
+    required => 1,
 );
 
 has rules => (
-	is       => 'rw',
-	isa      => 'ArrayRef',
-	default  => sub {[]},
+    is       => 'rw',
+    isa      => 'ArrayRef',
+    default  => sub {[]},
 );
 
 sub game_of_life {
-	my %params = @_;
+    my %params = @_;
 
-	my $board = Game::Life::Adv::Board->new(%params);
-	die "Where's my wrap? " . Dumper \%params, $board if $params{wrap} && !$board->wrap;
-	my %new = (board => $board);
-	$new{types} = $params{types} if $params{types};
+    my $board = Game::Life::Adv::Board->new(%params);
+    die "Where's my wrap? " . Dumper \%params, $board if $params{wrap} && !$board->wrap;
+    my %new = (board => $board);
+    $new{types} = $params{types} if $params{types};
 
-	return __PACKAGE__->new(%new);
+    return __PACKAGE__->new(%new);
 }
 
 sub add_rule {
-	my ($self, @rules) = @_;
+    my ($self, @rules) = @_;
 
-	while (@rules) {
-		my $rule = shift @rules;
-		if (ref $rule eq 'CODE') {
-			push @{ $self->rules }, $rule;
-		}
-		else {
-			my $value = shift @rules;
-			push @{ $self->rules },
-				  $rule eq 'live' ? sub {  $_[0] ? undef : ( sum $_[0]->surround ) > $value ? 1 : undef }
-				: $rule eq 'die'  ? sub { !$_[0] ? undef : ( sum $_[0]->surround ) < $value ? 0 : undef }
-				:                   die "The rule \"$rule\" is unknown\n";
-		}
-	}
+    while (@rules) {
+        my $rule = shift @rules;
+        if (ref $rule eq 'CODE') {
+            push @{ $self->rules }, $rule;
+        }
+        else {
+            my $value = shift @rules;
+            push @{ $self->rules },
+                  $rule eq 'live' ? sub {  $_[0] ? undef : ( sum $_[0]->surround ) > $value ? 1 : undef }
+                : $rule eq 'die'  ? sub { !$_[0] ? undef : ( sum $_[0]->surround ) < $value ? 0 : undef }
+                :                   die "The rule \"$rule\" is unknown\n";
+        }
+    }
 
-	return $self;
+    return $self;
 }
 
 sub process {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	while ( defined ( my $life = $self->board->next_life() ) ) {
-		$life->process($self->rules);
-	}
+    while ( defined ( my $life = $self->board->next_life() ) ) {
+        $life->process($self->rules);
+    }
 
-	return $self;
+    return $self;
 }
 
 sub set {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	while ( defined ( my $life = $self->board->next_life() ) ) {
-		$life->set();
-	}
+    while ( defined ( my $life = $self->board->next_life() ) ) {
+        $life->set();
+    }
 
-	return $self;
+    return $self;
 }
 
 sub to_string {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return $self->board->to_string();
+    return $self->board->to_string();
 }
 
 1;

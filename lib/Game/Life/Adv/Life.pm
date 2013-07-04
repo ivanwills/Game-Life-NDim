@@ -22,149 +22,149 @@ our %EXPORT_TAGS = ();
 #our @EXPORT      = qw//;
 
 has type => (
-	is      => 'rw',
-	isa     => 'Str',
-	default => 0,
+    is      => 'rw',
+    isa     => 'Str',
+    default => 0,
 );
 
 has next_type => (
-	is      => 'rw',
-	isa     => 'Str',
+    is      => 'rw',
+    isa     => 'Str',
 );
 
 has board => (
-	is       => 'rw',
-	isa      => 'Game::Life::Adv::Board',
-	required => 1,
-	weak_ref => 1,
+    is       => 'rw',
+    isa      => 'Game::Life::Adv::Board',
+    required => 1,
+    weak_ref => 1,
 );
 
 has position => (
-	is  => 'rw',
-	isa => 'Game::Life::Adv::Dim',
-	required => 1,
+    is  => 'rw',
+    isa => 'Game::Life::Adv::Dim',
+    required => 1,
 );
 
 sub seed {
-	my ($self, $types) = @_;
-	my $new_type;
+    my ($self, $types) = @_;
+    my $new_type;
 
-	TYPE:
-	while (!defined $new_type) {
-		for my $type (keys %{$types}) {
-			if ( rand() < $types->{$type} ) {
-				$new_type = $type;
-				last TYPE;
-			}
-		}
-	}
+    TYPE:
+    while (!defined $new_type) {
+        for my $type (keys %{$types}) {
+            if ( rand() < $types->{$type} ) {
+                $new_type = $type;
+                last TYPE;
+            }
+        }
+    }
 
-	$self->type($new_type);
+    $self->type($new_type);
 
-	return $self;
+    return $self;
 }
 
 # process
 sub process {
-	my ($self, $rules) = @_;
+    my ($self, $rules) = @_;
 
-	$self->next_type($self->type);
+    $self->next_type($self->type);
 
-	# process the rules in order until a rule is found that returns a type to
-	# change too, rules that maintain status quoe return undef
-	RULE:
-	for my $rule (@{ $rules } ) {
-		my $change = $rule->($self);
+    # process the rules in order until a rule is found that returns a type to
+    # change too, rules that maintain status quoe return undef
+    RULE:
+    for my $rule (@{ $rules } ) {
+        my $change = $rule->($self);
 
-		# next if status quoe
-		next RULE if !defined $change;
+        # next if status quoe
+        next RULE if !defined $change;
 
-		# stage the changed type
-		$self->next_type($change);
-		last RULE;
-	}
+        # stage the changed type
+        $self->next_type($change);
+        last RULE;
+    }
 
-	return $self;
+    return $self;
 }
 
 sub set {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	$self->type($self->next_type);
+    $self->type($self->next_type);
 
-	return $self;
+    return $self;
 }
 
 sub surround {
-	my ($self, $level) = @_;
-	my $max   = $self->board->dims;
-	my @lives;
-	my $cursor = $self->position->clone;
+    my ($self, $level) = @_;
+    my $max   = $self->board->dims;
+    my @lives;
+    my $cursor = $self->position->clone;
 
-	$level ||= 1;
-	my $itter = $self->transformer;
+    $level ||= 1;
+    my $itter = $self->transformer;
 
-	while (my $transform = $itter->()) {
-		my $life = eval{ $self->board->get_life($self->position + $transform) };
-		if (!$EVAL_ERROR) {
-			push @lives, $life;
-		}
-		else { warn "Error: $EVAL_ERROR\n"; }
-	}
+    while (my $transform = $itter->()) {
+        my $life = eval{ $self->board->get_life($self->position + $transform) };
+        if (!$EVAL_ERROR) {
+            push @lives, $life;
+        }
+        else { warn "Error: $EVAL_ERROR\n"; }
+    }
 
-	return \@lives;
+    return \@lives;
 }
 
 sub transformer {
-	my ($self) = @_;
-	my @max    = @{ $self->board->dims };
-	my $max    = @max - 1;
-	my @transform;
-	my @alter;
-	for (0 .. $max) {
-		push @transform, -1;
-	}
-	my $point;
+    my ($self) = @_;
+    my @max    = @{ $self->board->dims };
+    my $max    = @max - 1;
+    my @transform;
+    my @alter;
+    for (0 .. $max) {
+        push @transform, -1;
+    }
+    my $point;
 
-	my $itter;
-	$itter = sub {
-		if (!defined $point) {
-			$point = 0;
-			return [@transform];
-		}
+    my $itter;
+    $itter = sub {
+        if (!defined $point) {
+            $point = 0;
+            return [@transform];
+        }
 
-		my $done = 0;
-		while (!$done) {
-			if ($transform[$point] + 1 <= 1) {
-				$transform[$point]++;
-				$done = 1;
-				$point = 0;
-				last;
-			}
-			$transform[$point] = -1;
-			$point++;
-			my $undef;
-			return $undef if !exists $transform[$point];
-		}
+        my $done = 0;
+        while (!$done) {
+            if ($transform[$point] + 1 <= 1) {
+                $transform[$point]++;
+                $done = 1;
+                $point = 0;
+                last;
+            }
+            $transform[$point] = -1;
+            $point++;
+            my $undef;
+            return $undef if !exists $transform[$point];
+        }
 
-		return $itter->() if ($max + 1 == (grep {$_ == 0} @transform));
+        return $itter->() if ($max + 1 == (grep {$_ == 0} @transform));
 
-		return [@transform];
-	};
+        return [@transform];
+    };
 
-	return $itter;
+    return $itter;
 }
 
 sub clone {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return __PACKAGE__->new(type => $self->type, board => $self->board, position => $self->position);
+    return __PACKAGE__->new(type => $self->type, board => $self->board, position => $self->position);
 }
 
 sub to_string {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return $self->type;
+    return $self->type;
 }
 
 1;

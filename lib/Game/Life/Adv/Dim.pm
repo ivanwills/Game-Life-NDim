@@ -14,89 +14,89 @@ use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 
 use overload
-	'""'  => sub { '[' . ( join ',', @{ $_[0]->elements } ) . ']' },
-	'@{}' => sub { $_[0]->elements },
-	'=='  => sub { for (0..@{$_->[0]}-1) { return 0 if $_[0][$_] != $_[1][$_] } return 1 },
-	'+'   => \&sum_list;
+    '""'  => sub { '[' . ( join ',', @{ $_[0]->elements } ) . ']' },
+    '@{}' => sub { $_[0]->elements },
+    '=='  => sub { for (0..@{$_->[0]}-1) { return 0 if $_[0][$_] != $_[1][$_] } return 1 },
+    '+'   => \&sum_list;
 
 our $VERSION     = version->new('0.0.1');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
 has elements => (
-	is       => 'rw',
-	isa      => 'ArrayRef',
-	required => 1,
+    is       => 'rw',
+    isa      => 'ArrayRef',
+    required => 1,
 );
 
 has max => (
-	is       => 'rw',
-	isa      => 'ArrayRef[Int]',
-	weak_ref => 1,
+    is       => 'rw',
+    isa      => 'ArrayRef[Int]',
+    weak_ref => 1,
 );
 
 around new => sub {
-	my ($new, $class, @args) = @_;
+    my ($new, $class, @args) = @_;
 
-	if ( @args == 1 && ref $args[0] eq 'ARRAY' ) {
-		@args = ( elements => $args[0] );
-	}
-	else {
-		my %params = @args;
-		if (!exists $params{elements} && exists $params{max}) {
-			$params{elements} = [ @{ $params{max} } ];
-			return $new->($class, %params)->zero;
-		}
-	}
+    if ( @args == 1 && ref $args[0] eq 'ARRAY' ) {
+        @args = ( elements => $args[0] );
+    }
+    else {
+        my %params = @args;
+        if (!exists $params{elements} && exists $params{max}) {
+            $params{elements} = [ @{ $params{max} } ];
+            return $new->($class, %params)->zero;
+        }
+    }
 
-	return $new->($class, @args);
+    return $new->($class, @args);
 };
 
 sub increment {
-	my ($self, $max) = @_;
-	my $last;
+    my ($self, $max) = @_;
+    my $last;
 
-	for my $i ( reverse 0 .. @{ $max } - 1 ) {
-		die "max[$i] == 0 which is not allowed!" if $max->[$i] == 0;
-		if ( $self->[$i] + 1 <= $max->[$i] ) {
-			$self->[$i]++;
-			$last = $i;
-			last;
-		}
-		$self->[$i] = 0;
-	}
+    for my $i ( reverse 0 .. @{ $max } - 1 ) {
+        die "max[$i] == 0 which is not allowed!" if $max->[$i] == 0;
+        if ( $self->[$i] + 1 <= $max->[$i] ) {
+            $self->[$i]++;
+            $last = $i;
+            last;
+        }
+        $self->[$i] = 0;
+    }
 
-	return if !defined $last;
+    return if !defined $last;
 
-	return $self;
+    return $self;
 }
 
 sub clone {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	return $self->new(elements => [ @{ $self } ]);
+    return $self->new(elements => [ @{ $self } ]);
 }
 
 sub zero {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	for my $item (@{ $self }) {
-		$item = 0;
-	}
+    for my $item (@{ $self }) {
+        $item = 0;
+    }
 
-	return $self;
+    return $self;
 }
 
 sub sum_list {
-	my ($self, $list) = @_;
+    my ($self, $list) = @_;
 
-	my @new;
-	for my $i ( 0 .. @{ $self } - 1 ) {
-		die Dumper $i, $self, $list if !defined $self->[$i] || !defined $list->[$i];
-		$new[$i] = $self->[$i] + $list->[$i];
-	}
+    my @new;
+    for my $i ( 0 .. @{ $self } - 1 ) {
+        die Dumper $i, $self, $list if !defined $self->[$i] || !defined $list->[$i];
+        $new[$i] = $self->[$i] + $list->[$i];
+    }
 
-	return __PACKAGE__->new(\@new);
+    return __PACKAGE__->new(\@new);
 }
 
 1;

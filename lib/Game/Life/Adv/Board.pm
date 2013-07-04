@@ -25,226 +25,226 @@ our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
 has items => (
-	is    => 'rw',
-	isa   => 'ArrayRef',
-	lazy_build  => 1,
+    is    => 'rw',
+    isa   => 'ArrayRef',
+    lazy_build  => 1,
 );
 
 has dims => (
-	is       => 'ro',
-	isa      => 'Game::Life::Adv::Dim',
-	required => 1,
+    is       => 'ro',
+    isa      => 'Game::Life::Adv::Dim',
+    required => 1,
 );
 
 has cursor => (
-	is     => 'rw',
-	isa    => 'Game::Life::Adv::Dim',
+    is     => 'rw',
+    isa    => 'Game::Life::Adv::Dim',
 );
 
 has types => (
-	is       => 'rw',
-	isa     => 'HashRef',
-	default => sub {{ 0 => 0.6, 1 => 0.4 }},
+    is       => 'rw',
+    isa     => 'HashRef',
+    default => sub {{ 0 => 0.6, 1 => 0.4 }},
 );
 
 has wrap => (
-	is       => 'rw',
-	isa     => 'Bool',
-	default => 0,
+    is       => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 
 has verbose => (
-	is       => 'rw',
-	isa     => 'Bool',
-	default => 0,
+    is       => 'rw',
+    isa     => 'Bool',
+    default => 0,
 );
 
 around new => sub {
-	my ($new, $class, %params) = @_;
+    my ($new, $class, %params) = @_;
 
-	if (ref $params{dims} eq 'ARRAY') {
-		$params{dims} = Game::Life::Adv::Dim->new($params{dims});
-	}
+    if (ref $params{dims} eq 'ARRAY') {
+        $params{dims} = Game::Life::Adv::Dim->new($params{dims});
+    }
 
-	my $self = $new->($class, %params);
+    my $self = $new->($class, %params);
 
-	$self->reset;
-	$self->seed(%params) if $params{rand};
-	#$self->cursor(Game::Life::Adv::Dim->new([]));
-	for (@{ $self->dims }) {
-		push @{ $self->cursor }, 0;
-	}
+    $self->reset;
+    $self->seed(%params) if $params{rand};
+    #$self->cursor(Game::Life::Adv::Dim->new([]));
+    for (@{ $self->dims }) {
+        push @{ $self->cursor }, 0;
+    }
 
-	return $self;
+    return $self;
 };
 
 sub _build_items {
-	my ($self, %params) = @_;
+    my ($self, %params) = @_;
 
-	$self->types = $params{types} if $params{types};
+    $self->types = $params{types} if $params{types};
 
-	my $items = [];
-	my $lives = 0;
+    my $items = [];
+    my $lives = 0;
 
-	my $builder;
-	$builder = sub {
-		my ($items, $dims, $pos) = @_;
-		my $count = $dims->[0];
+    my $builder;
+    $builder = sub {
+        my ($items, $dims, $pos) = @_;
+        my $count = $dims->[0];
 
-		for my $i ( 0 .. $count - 1 ) {
-			if ( @{$dims} == 1 ) {
-				$items->[$i] = Game::Life::Adv::Life->new(
-					position => Game::Life::Adv::Dim->new([ @{ $pos }, $i ]),
-					board    => $self
-				);
-				$lives++;
-			}
-			else {
-				$items->[$i] = [];
-				my $sub_dims = [ @{ $dims }[ 1 .. @{ $dims } - 1 ] ];
-				my $sub_pos  = [ @{ $pos }, $i ];
-				my $sub_items = $items->[$i];
-				$builder->($sub_items, $sub_dims, $sub_pos);
-			}
-		}
-	};
-	$builder->($items, $self->dims, []);
+        for my $i ( 0 .. $count - 1 ) {
+            if ( @{$dims} == 1 ) {
+                $items->[$i] = Game::Life::Adv::Life->new(
+                    position => Game::Life::Adv::Dim->new([ @{ $pos }, $i ]),
+                    board    => $self
+                );
+                $lives++;
+            }
+            else {
+                $items->[$i] = [];
+                my $sub_dims = [ @{ $dims }[ 1 .. @{ $dims } - 1 ] ];
+                my $sub_pos  = [ @{ $pos }, $i ];
+                my $sub_items = $items->[$i];
+                $builder->($sub_items, $sub_dims, $sub_pos);
+            }
+        }
+    };
+    $builder->($items, $self->dims, []);
 
-	return $items;
+    return $items;
 }
 
 sub seed {
-	my ($self, %params) = @_;
+    my ($self, %params) = @_;
 
-	$self->types = $params{types} if $params{types};
+    $self->types = $params{types} if $params{types};
 
-	my $i = 0;
-	while ( ref (my $life = $self->next_life()) ) {
-		$life->seed($self->types);
-	}
-	$self->reset;
+    my $i = 0;
+    while ( ref (my $life = $self->next_life()) ) {
+        $life->seed($self->types);
+    }
+    $self->reset;
 
-	return $self;
+    return $self;
 }
 
 sub reset {
-	my ($self) = @_;
-	my @cursor;
+    my ($self) = @_;
+    my @cursor;
 
-	for (@{ $self->dims }) {
-		push @cursor, 0;
-	}
+    for (@{ $self->dims }) {
+        push @cursor, 0;
+    }
 
-	$cursor[-1] = -1;
+    $cursor[-1] = -1;
 
-	$self->cursor(Game::Life::Adv::Dim->new(\@cursor));
+    $self->cursor(Game::Life::Adv::Dim->new(\@cursor));
 
-	return $self;
+    return $self;
 }
 
 sub next_life {
-	my ($self) = @_;
-	my $max_dim;
+    my ($self) = @_;
+    my $max_dim;
 
-	return if !$self->cursor->increment($self->dims);
+    return if !$self->cursor->increment($self->dims);
 
-	my $life = $self->items;
+    my $life = $self->items;
 
-	my @pos;
-	for my $i ( 0 .. @{ $self->dims } - 1 ) {
-		if ( ! exists $self->cursor->[$i] ) {
-			die "here?\n";
-			$self->cursor->[$i] = 0;
-		}
-		my $pos = $self->cursor->[$i];
-		push @pos, $pos;
-		if ( ref $life eq 'ARRAY' && @{ $life }  < $pos + 1 ) {
-			$life->[$pos] =
-				$i < @{ $self->cursor } - 1 ? []
-				:                             Game::Life::Adv::Life->new(board => $self, position => $self->cursor);
-		}
-		$life = $life->[$pos];
-	}
+    my @pos;
+    for my $i ( 0 .. @{ $self->dims } - 1 ) {
+        if ( ! exists $self->cursor->[$i] ) {
+            die "here?\n";
+            $self->cursor->[$i] = 0;
+        }
+        my $pos = $self->cursor->[$i];
+        push @pos, $pos;
+        if ( ref $life eq 'ARRAY' && @{ $life }  < $pos + 1 ) {
+            $life->[$pos] =
+                $i < @{ $self->cursor } - 1 ? []
+                :                             Game::Life::Adv::Life->new(board => $self, position => $self->cursor);
+        }
+        $life = $life->[$pos];
+    }
 
-	return $life;
+    return $life;
 }
 
 sub set_life {
-	my ($self, $life) = @_;
+    my ($self, $life) = @_;
 
-	my $curr = $self->items;
+    my $curr = $self->items;
 
-	for my $i ( @{ $self->cursor } ) {
-		if ( ref $curr->[$i] eq 'ARRAY' ) {
-			$curr = $curr->[$i];
-		}
-		else {
-			$curr->[$i] = $life;
-		}
-	}
+    for my $i ( @{ $self->cursor } ) {
+        if ( ref $curr->[$i] eq 'ARRAY' ) {
+            $curr = $curr->[$i];
+        }
+        else {
+            $curr->[$i] = $life;
+        }
+    }
 
-	return $self;
+    return $self;
 }
 
 sub get_life {
-	my ($self, $position) = @_;
+    my ($self, $position) = @_;
 
-	my $item = $self->items;
-	my $min  = $self->wrap ? -1 : 0;
-	die if !defined $min;
+    my $item = $self->items;
+    my $min  = $self->wrap ? -1 : 0;
+    die if !defined $min;
 
-	for my $i (@{ $position } ) {
-		croak "Cannot get game position from $position $i >= $min " if $i < $min || !exists $item->[$i];
-		$item = $item->[$i];
-	}
+    for my $i (@{ $position } ) {
+        croak "Cannot get game position from $position $i >= $min " if $i < $min || !exists $item->[$i];
+        $item = $item->[$i];
+    }
 
-	return $item;
+    return $item;
 }
 
 sub to_string {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	die "The dimension of this game is to large to sensibly convert to a string\n" if @{ $self->dims } > 3;
+    die "The dimension of this game is to large to sensibly convert to a string\n" if @{ $self->dims } > 3;
 
-	my $spacer = ( 10 >= max (@{$self->dims}, scalar @{$self->dims}) ) ? ' ' : '';
+    my $spacer = ( 10 >= max (@{$self->dims}, scalar @{$self->dims}) ) ? ' ' : '';
 
-	my $out = '';
-	my @outs;
-	$self->reset;
-	my $i = 0;
-	my $level = 0;
-	while ( ref ( my $life = $self->next_life() ) ) {
-		if ( @{$self->cursor} > 2 && $self->cursor->[0] != $level) {
-			$out .= "\n";
-			$level = $self->cursor->[0];
-			push @outs, $out;
-			$out = '';
-		}
-		$out .= $life;
-		$out .= $self->cursor->[-1] == $self->dims->[-1] ? "\n" : $spacer;
-		$i++;
-	}
-	$self->reset;
+    my $out = '';
+    my @outs;
+    $self->reset;
+    my $i = 0;
+    my $level = 0;
+    while ( ref ( my $life = $self->next_life() ) ) {
+        if ( @{$self->cursor} > 2 && $self->cursor->[0] != $level) {
+            $out .= "\n";
+            $level = $self->cursor->[0];
+            push @outs, $out;
+            $out = '';
+        }
+        $out .= $life;
+        $out .= $self->cursor->[-1] == $self->dims->[-1] ? "\n" : $spacer;
+        $i++;
+    }
+    $self->reset;
 
-	if (@outs) {
-		$out .= "\n";
-		$level = $self->cursor->[0];
-		push @outs, $out;
-		$out = '';
-		my @lines;
-		for my $level (@outs) {
-			my $i = 0;
-			for my $line (split /\n/, $level) {
-				$lines[$i] ||= '';
-				$lines[$i] .= "    $line";
-				$i++;
-			}
-		}
-		return join "\n", @lines, '';
-	}
+    if (@outs) {
+        $out .= "\n";
+        $level = $self->cursor->[0];
+        push @outs, $out;
+        $out = '';
+        my @lines;
+        for my $level (@outs) {
+            my $i = 0;
+            for my $line (split /\n/, $level) {
+                $lines[$i] ||= '';
+                $lines[$i] .= "    $line";
+                $i++;
+            }
+        }
+        return join "\n", @lines, '';
+    }
 
-	#return "Board:\n" . $out . "\nCount = $i\n";
-	return $out;
+    #return "Board:\n" . $out . "\nCount = $i\n";
+    return $out;
 }
 
 1;
