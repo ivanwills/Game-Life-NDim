@@ -12,6 +12,8 @@ lib/Game/Life/Adv/Life.pm
 t/00-load.t
 t/boilerplate.t
 t/critic.t
+t/glab.t
+t/glal.t
 t/kwalitee.t
 t/pod-coverage.t
 t/pod.t
