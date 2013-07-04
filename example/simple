@@ -21,17 +21,17 @@ our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
 
 my %option = (
-	max     => 10,
-	live    => 5,
-	die     => 1,
-	verbose => 0,
-	man     => 0,
-	help    => 0,
-	VERSION => 0,
+    max     => 10,
+    live    => 5,
+    die     => 1,
+    verbose => 0,
+    man     => 0,
+    help    => 0,
+    VERSION => 0,
 );
 
 if ( !@ARGV ) {
-	pod2usage( -verbose => 1 );
+    pod2usage( -verbose => 1 );
 }
 
 main();
@@ -39,115 +39,116 @@ exit 0;
 
 sub main {
 
-	Getopt::Long::Configure('bundling');
-	GetOptions(
-		\%option,
-		'live|l=i',
-		'die|d=i',
-		'max|m=i',
-		'wrap|w',
-		'verbose|v+',
-		'man',
-		'help',
-		'VERSION!',
-	) or pod2usage(2);
+    Getopt::Long::Configure('bundling');
+    GetOptions(
+        \%option,
+        'live|l=i',
+        'die|d=i',
+        'max|m=i',
+        'wrap|w',
+        'verbose|v+',
+        'man',
+        'help',
+        'VERSION!',
+    ) or pod2usage(2);
 
-	if ( $option{'VERSION'} ) {
-		print "$name Version = $VERSION\n";
-		exit 1;
-	}
-	elsif ( $option{'man'} ) {
-		pod2usage( -verbose => 2 );
-	}
-	elsif ( $option{'help'} ) {
-		pod2usage( -verbose => 1 );
-	}
+    if ( $option{'VERSION'} ) {
+        print "$name Version = $VERSION\n";
+        exit 1;
+    }
+    elsif ( $option{'man'} ) {
+        pod2usage( -verbose => 2 );
+    }
+    elsif ( $option{'help'} ) {
+        pod2usage( -verbose => 1 );
+    }
 
-	# do stuff here
-	my $dim = [ map { $_ - 1 } @ARGV ];
-	my $gof = Game::Life::Adv::game_of_life(
-		dims => $dim,
-		rand => 1,
-		wrap => $option{wrap},
-	);
-	my $count = 0;
+    # do stuff here
+    my $dim = [ map { $_ - 1 } @ARGV ];
+    my $gof = Game::Life::Adv::game_of_life(
+        dims => $dim,
+        rand => 1,
+        wrap => $option{wrap},
+    );
+    my $count = 0;
 
-	$gof->add_rule(
-		sub {
-			my $sub = sum $_[0]->surround;
-			if ("$_[0]" eq '1') {
-				return
-					  $sub == 0 ? undef
-					: $sub == 1 ? undef
-					: $sub == 2 ? undef
-					: $sub == 3 ? undef
-					: $sub == 4 ? undef
-					: $sub == 5 ? undef
-					: $sub == 6 ? 0
-					: $sub == 7 ? 0
-					: $sub == 8 ? 0
-					: $sub == 9 ? 0
-					:             undef;
-			}
-			else {
-				return
-					  $sub == 0 ? undef
-					: $sub == 1 ? undef
-					: $sub == 2 ? undef
-					: $sub == 3 ? 1
-					: $sub == 4 ? 1
-					: $sub == 5 ? 1
-					: $sub == 6 ? 1
-					: $sub == 7 ? 1
-					: $sub == 8 ? 1
-					: $sub == 9 ? 1
-					:             undef;
-			}
-		},
-		#live => 5,
-		#die  => 1,
-	);
+    $gof->add_rule(
+        sub {
+            my $sub = sum $_[0]->surround;
+            if ("$_[0]" eq '1') {
+                return
+                      $sub == 0 ? undef
+                    : $sub == 1 ? undef
+                    : $sub == 2 ? undef
+                    : $sub == 3 ? undef
+                    : $sub == 4 ? undef
+                    : $sub == 5 ? undef
+                    : $sub == 6 ? 0
+                    : $sub == 7 ? 0
+                    : $sub == 8 ? 0
+                    : $sub == 9 ? 0
+                    :             undef;
+            }
+            else {
+                return
+                      $sub == 0 ? undef
+                    : $sub == 1 ? undef
+                    : $sub == 2 ? undef
+                    : $sub == 3 ? 1
+                    : $sub == 4 ? 1
+                    : $sub == 5 ? 1
+                    : $sub == 6 ? 1
+                    : $sub == 7 ? 1
+                    : $sub == 8 ? 1
+                    : $sub == 9 ? 1
+                    :             undef;
+            }
+        },
+        #live => 5,
+        #die  => 1,
+    );
 
-	my $last = "$gof\n";
-	print $last;
-	sleep 1;
+    my $last = "$gof\n";
+    print $last;
+    sleep 1;
 
-	while ( $count++ < $option{max} && $gof->process ) {
-		$gof->set;
-		my $cur = "$gof\n";
-		die "Static game\n" if $cur eq $last;
-		print $cur;
-		$last = $cur;
+    while ( $count++ < $option{max} && $gof->process ) {
+        $gof->set;
+        my $cur = "$gof\n";
+        die "Static game\n" if $cur eq $last;
+        print $cur;
+        $last = $cur;
 #		die Dumper $gof->board->items;
-		sleep 1;
-	}
+        sleep 1;
+    }
 
-	return;
+    return;
 }
 
 __DATA__
 
 =head1 NAME
 
-example/simple - <One-line description of commands purpose>
+simple - Simple game of life usage
 
 =head1 VERSION
 
-This documentation refers to example/simple version 0.1.
+This documentation refers to simple version 0.1.
 
 =head1 SYNOPSIS
 
-   example/simple [option]
+   simple [option]
 
  OPTIONS:
-  -o --other         other option
+  -l --live[=]int   Number of surrouding lifes to continue living
+  -d --die[=]int    This number or more surrounding lifes causes death
+  -m --max[=]int    Max
+  -w --wrap         Wrap the board
 
-  -v --verbose       Show more detailed option
-     --version       Prints the version information
-     --help          Prints this help information
-     --man           Prints the full documentation for example/simple
-
-
+  -v --verbose      Show more detailed option
+     --version      Prints the version information
+     --help         Prints this help information
+     --man          Prints the full documentation for simple
 
 =head1 DESCRIPTION
 
