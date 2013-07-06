@@ -1,4 +1,4 @@
-package Game::Life::Adv::Board;
+package Game::Life::NDim::Board;
 
 # Created on: 2010-01-04 18:52:38
 # Create by:  Ivan Wills
@@ -14,8 +14,8 @@ use Carp qw/croak cluck/;
 use List::Util qw/max/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use Game::Life::Adv::Life;
-use Game::Life::Adv::Dim;
+use Game::Life::NDim::Life;
+use Game::Life::NDim::Dim;
 use Params::Coerce ();
 
 use overload '""' => \&to_string;
@@ -32,13 +32,13 @@ has items => (
 
 has dims => (
     is       => 'ro',
-    isa      => 'Game::Life::Adv::Dim',
+    isa      => 'Game::Life::NDim::Dim',
     required => 1,
 );
 
 has cursor => (
     is     => 'rw',
-    isa    => 'Game::Life::Adv::Dim',
+    isa    => 'Game::Life::NDim::Dim',
 );
 
 has types => (
@@ -63,14 +63,14 @@ around new => sub {
     my ($new, $class, %params) = @_;
 
     if (ref $params{dims} eq 'ARRAY') {
-        $params{dims} = Game::Life::Adv::Dim->new($params{dims});
+        $params{dims} = Game::Life::NDim::Dim->new($params{dims});
     }
 
     my $self = $new->($class, %params);
 
     $self->reset;
     $self->seed(%params) if $params{rand};
-    #$self->cursor(Game::Life::Adv::Dim->new([]));
+    #$self->cursor(Game::Life::NDim::Dim->new([]));
     for (@{ $self->dims }) {
         push @{ $self->cursor }, 0;
     }
@@ -93,8 +93,8 @@ sub _build_items {
 
         for my $i ( 0 .. $count - 1 ) {
             if ( @{$dims} == 1 ) {
-                $items->[$i] = Game::Life::Adv::Life->new(
-                    position => Game::Life::Adv::Dim->new([ @{ $pos }, $i ]),
+                $items->[$i] = Game::Life::NDim::Life->new(
+                    position => Game::Life::NDim::Dim->new([ @{ $pos }, $i ]),
                     board    => $self
                 );
                 $lives++;
@@ -137,7 +137,7 @@ sub reset {
 
     $cursor[-1] = -1;
 
-    $self->cursor(Game::Life::Adv::Dim->new(\@cursor));
+    $self->cursor(Game::Life::NDim::Dim->new(\@cursor));
 
     return $self;
 }
@@ -161,7 +161,7 @@ sub next_life {
         if ( ref $life eq 'ARRAY' && @{ $life }  < $pos + 1 ) {
             $life->[$pos] =
                 $i < @{ $self->cursor } - 1 ? []
-                :                             Game::Life::Adv::Life->new(board => $self, position => $self->cursor);
+                :                             Game::Life::NDim::Life->new(board => $self, position => $self->cursor);
         }
         $life = $life->[$pos];
     }
@@ -253,16 +253,16 @@ __END__
 
 =head1 NAME
 
-Game::Life::Adv::Board - <One-line description of module's purpose>
+Game::Life::NDim::Board - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to Game::Life::Adv::Board version 0.1.
+This documentation refers to Game::Life::NDim::Board version 0.1.
 
 
 =head1 SYNOPSIS
 
-   use Game::Life::Adv::Board;
+   use Game::Life::NDim::Board;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as

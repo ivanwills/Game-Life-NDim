@@ -1,4 +1,4 @@
-package Game::Life::Adv;
+package Game::Life::NDim;
 
 # Created on: 2010-01-04 18:52:01
 # Create by:  Ivan Wills
@@ -15,7 +15,7 @@ use List::Util qw/sum/;
 #use List::MoreUtils;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
-use Game::Life::Adv::Board;
+use Game::Life::NDim::Board;
 
 use overload '""' => \&to_string;
 
@@ -25,7 +25,7 @@ our %EXPORT_TAGS = ();
 
 has board => (
     is       => 'rw',
-    isa      => 'Game::Life::Adv::Board',
+    isa      => 'Game::Life::NDim::Board',
     required => 1,
 );
 
@@ -38,7 +38,7 @@ has rules => (
 sub game_of_life {
     my %params = @_;
 
-    my $board = Game::Life::Adv::Board->new(%params);
+    my $board = Game::Life::NDim::Board->new(%params);
     die "Where's my wrap? " . Dumper \%params, $board if $params{wrap} && !$board->wrap;
     my %new = (board => $board);
     $new{types} = $params{types} if $params{types};
@@ -98,16 +98,16 @@ __END__
 
 =head1 NAME
 
-Game::Life::Adv - Infrastructure for playing Conway's game of life with
+Game::Life::NDim - Infrastructure for playing Conway's game of life with
 support for multiple cell types and 2D or 3D boards.
 
 =head1 VERSION
 
-This documentation refers to Game::Life::Adv version 0.1.
+This documentation refers to Game::Life::NDim version 0.1.
 
 =head1 SYNOPSIS
 
-   use Game::Life::Adv;
+   use Game::Life::NDim;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as

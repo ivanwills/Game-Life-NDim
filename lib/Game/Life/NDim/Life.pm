@@ -1,4 +1,4 @@
-package Game::Life::Adv::Life;
+package Game::Life::NDim::Life;
 
 # Created on: 2010-01-04 18:54:13
 # Create by:  Ivan Wills
@@ -34,14 +34,14 @@ has next_type => (
 
 has board => (
     is       => 'rw',
-    isa      => 'Game::Life::Adv::Board',
+    isa      => 'Game::Life::NDim::Board',
     required => 1,
     weak_ref => 1,
 );
 
 has position => (
     is  => 'rw',
-    isa => 'Game::Life::Adv::Dim',
+    isa => 'Game::Life::NDim::Dim',
     required => 1,
 );
 
@@ -173,16 +173,16 @@ __END__
 
 =head1 NAME
 
-Game::Life::Adv::Life - <One-line description of module's purpose>
+Game::Life::NDim::Life - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to Game::Life::Adv::Life version 0.1.
+This documentation refers to Game::Life::NDim::Life version 0.1.
 
 
 =head1 SYNOPSIS
 
-   use Game::Life::Adv::Life;
+   use Game::Life::NDim::Life;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as

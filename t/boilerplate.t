@@ -45,6 +45,6 @@ sub module_boilerplate_ok {
     "placeholder date/time"       => qr(Date/time)
   );
 
-  module_boilerplate_ok('lib/Game/Life/Adv.pm');
+  module_boilerplate_ok('lib/Game/Life/NDim.pm');
 
 

@@ -1,4 +1,4 @@
-package Game::Life::Adv::Dim;
+package Game::Life::NDim::Dim;
 
 # Created on: 2010-01-08 18:43:32
 # Create by:  Ivan Wills
@@ -105,16 +105,16 @@ __END__
 
 =head1 NAME
 
-Game::Life::Adv::Dim - <One-line description of module's purpose>
+Game::Life::NDim::Dim - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to Game::Life::Adv::Dim version 0.1.
+This documentation refers to Game::Life::NDim::Dim version 0.1.
 
 
 =head1 SYNOPSIS
 
-   use Game::Life::Adv::Dim;
+   use Game::Life::NDim::Dim;
 
    # Brief but working code example(s) here showing the most common usage(s)
    # This section will be as far as many users bother reading, so make it as

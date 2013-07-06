@@ -8,13 +8,13 @@ use Test::More tests => 8 + 1;
 use Test::NoWarnings;
 use Data::Dumper qw/Dumper/;
 
-use Game::Life::Adv::Dim;
+use Game::Life::NDim::Dim;
 
 my $max = [1,1,2];
-my $dim = Game::Life::Adv::Dim->new([@$max]);
+my $dim = Game::Life::NDim::Dim->new([@$max]);
 
 is_deeply($dim->zero->elements, [0, 0, 0], 'Zeros corectly');
-$dim = Game::Life::Adv::Dim->new(max => $max);
+$dim = Game::Life::NDim::Dim->new(max => $max);
 is_deeply($dim->elements, [0, 0, 0], 'Max Zeros corectly');
 
 is_deeply($dim->increment($max)->elements, [0, 0, 1], 'basic increment');
