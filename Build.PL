@@ -18,6 +18,7 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More'       => 0,
         'Test::NoWarnings' => 0,
+        'Test::Warn'       => 0,
     },
     add_to_cleanup     => [ 'Game-Life-NDim-*' ],
     create_makefile_pl => 'traditional',
