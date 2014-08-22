@@ -1,4 +1,4 @@
-API For Game::Life::Adv
+API For Game::Life::NDim
 
 Goals
 * Should be able support multiple life forms

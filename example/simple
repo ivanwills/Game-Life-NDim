@@ -15,7 +15,7 @@ use Pod::Usage;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
 use FindBin qw/$Bin/;
-use Game::Life::Adv qw/game_of_life/;
+use Game::Life::NDim qw/game_of_life/;
 
 our $VERSION = version->new('0.0.1');
 my ($name)   = $PROGRAM_NAME =~ m{^.*/(.*?)$}mxs;
@@ -65,7 +65,7 @@ sub main {
 
     # do stuff here
     my $dim = [ map { $_ - 1 } @ARGV ];
-    my $gof = Game::Life::Adv::game_of_life(
+    my $gof = Game::Life::NDim::game_of_life(
         dims => $dim,
         rand => 1,
         wrap => $option{wrap},
