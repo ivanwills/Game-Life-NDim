@@ -103,7 +103,7 @@ support for multiple cell types and 2D or 3D boards.
 
 =head1 VERSION
 
-This documentation refers to Game::Life::NDim version 0.1.
+This documentation refers to Game::Life::NDim version 0.0.1.
 
 =head1 SYNOPSIS
 

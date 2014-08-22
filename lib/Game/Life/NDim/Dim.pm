@@ -109,7 +109,7 @@ Game::Life::NDim::Dim - <One-line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to Game::Life::NDim::Dim version 0.1.
+This documentation refers to Game::Life::NDim::Dim version 0.0.1.
 
 
 =head1 SYNOPSIS
