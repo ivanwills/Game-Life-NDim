@@ -5,10 +5,10 @@ MANIFEST.SKIP
 META.yml
 Makefile.PL
 README
-lib/Game/Life/Adv.pm
-lib/Game/Life/Adv/Board.pm
-lib/Game/Life/Adv/Dim.pm
-lib/Game/Life/Adv/Life.pm
+lib/Game/Life/NDim.pm
+lib/Game/Life/NDim/Board.pm
+lib/Game/Life/NDim/Dim.pm
+lib/Game/Life/NDim/Life.pm
 t/00-load.t
 t/boilerplate.t
 t/critic.t
@@ -22,3 +22,5 @@ t/spelling.t
 t/glad.t
 apt.txt
 example/simple
+LICENSE
+META.json

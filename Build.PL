@@ -3,10 +3,10 @@ use warnings;
 use Module::Build;
 
 my $builder = Module::Build->new(
-    module_name       => 'Game::Life::Adv',
+    module_name       => 'Game::Life::NDim',
     license           => 'perl',
     dist_author       => q{Ivan Wills <ivan.wills@gmail.com>},
-    dist_version_from => 'lib/Game/Life/Adv.pm',
+    dist_version_from => 'lib/Game/Life/NDim.pm',
     requires          => {
         'perl'           => 5.010,
         'Moose'          => 0,
@@ -19,13 +19,13 @@ my $builder = Module::Build->new(
         'Test::More'       => 0,
         'Test::NoWarnings' => 0,
     },
-    add_to_cleanup     => [ 'Game-Life-Adv-*' ],
+    add_to_cleanup     => [ 'Game-Life-NDim-*' ],
     create_makefile_pl => 'traditional',
     create_license     => 1,
     meta_merge         => {
         resources => {
-            repository => 'http://github.com/ivanwills/Game-Life-Adv',
-            bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Game-Life-Adv',
+            repository => 'http://github.com/ivanwills/Game-Life-NDim',
+            bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Game-Life-NDim',
         },
     },
 );
