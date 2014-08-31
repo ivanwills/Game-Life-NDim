@@ -10,7 +10,7 @@ use Moose;
 use warnings;
 use feature qw/:5.10/;
 use version;
-use Carp qw/croak cluck/;
+use Carp qw/croak cluck confess/;
 use List::Util qw/max/;
 use Data::Dumper qw/Dumper/;
 use English qw/ -no_match_vars /;
@@ -134,6 +134,8 @@ sub reset {
     for (@{ $self->dims }) {
         push @cursor, 0;
     }
+
+    confess "Empty cursor!" if !@cursor;
 
     $cursor[-1] = -1;
 
