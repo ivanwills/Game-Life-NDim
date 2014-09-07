@@ -62,6 +62,10 @@ sub main {
     elsif ( $option{'help'} ) {
         pod2usage( -verbose => 1 );
     }
+    elsif ( !@ARGV ) {
+        warn "No dimentions specified!\n";
+        pod2usage( -verbose => 1 );
+    }
 
     # do stuff here
     my $dim = [ map { $_ - 1 } @ARGV ];
@@ -137,9 +141,10 @@ This documentation refers to simple version 0.1.
 
 =head1 SYNOPSIS
 
-   simple [option]
+   simple [option] dimentions
 
  OPTIONS:
+  dimentions        Number of dimentions to use
   -l --live[=]int   Number of surrouding lifes to continue living
   -d --die[=]int    This number or more surrounding lifes causes death
   -m --max[=]int    Max
