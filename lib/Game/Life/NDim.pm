@@ -98,8 +98,7 @@ __END__
 
 =head1 NAME
 
-Game::Life::NDim - Infrastructure for playing Conway's game of life with
-support for multiple cell types and 2D or 3D boards.
+Game::Life::NDim - Infrastructure for playing Conway's game of life with support for multiple cell types and 2D or 3D boards.
 
 =head1 VERSION
 

@@ -105,7 +105,7 @@ __END__
 
 =head1 NAME
 
-Game::Life::NDim::Dim - <One-line description of module's purpose>
+Game::Life::NDim::Dim - The dimesion of a board?
 
 =head1 VERSION
 
@@ -122,11 +122,6 @@ This documentation refers to Game::Life::NDim::Dim version 0.0.1.
 
 
 =head1 DESCRIPTION
-
-A full description of the module and its features.
-
-May include numerous subsections (i.e., =head2, =head3, etc.).
-
 
 =head1 SUBROUTINES/METHODS
 
