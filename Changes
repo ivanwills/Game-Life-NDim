@@ -1,5 +1,19 @@
 Revision history for Game-Life-NDim
 
+0.0.2   2015-01-13
+        Updating for release of version 0.0.2
+        Updated License (Ivan Wills)
+        Fixed typos (Ivan Wills)
+        Cleaned up boilerplate text (Ivan Wills)
+        Updated boilerplate test (Ivan Wills)
+        group-git tag (Ivan Wills)
+        Merge branch 'master' of github.com:ivanwills/Game-Life-NDim (Ivan Wills)
+        Added better error checking (Ivan Wills)
+        Added missing documentation and error checking (Ivan Wills)
+        Start using travis-ci (Ivan Wills)
+        Updating for first release (Ivan Wills)
+        Added missing dependency (Ivan Wills)
+
 0.0.1   2014-07-23
         Completed rename (Ivan Wills)
         Fixed version (Ivan Wills)

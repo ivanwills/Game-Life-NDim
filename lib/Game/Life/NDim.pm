@@ -19,7 +19,7 @@ use Game::Life::NDim::Board;
 
 use overload '""' => \&to_string;
 
-our $VERSION     = version->new('0.0.1');
+our $VERSION     = version->new('0.0.2');
 our @EXPORT_OK   = qw/game_of_life/;
 our %EXPORT_TAGS = ();
 
@@ -102,7 +102,7 @@ Game::Life::NDim - Infrastructure for playing Conway's game of life with support
 
 =head1 VERSION
 
-This documentation refers to Game::Life::NDim version 0.0.1.
+This documentation refers to Game::Life::NDim version 0.0.2.
 
 =head1 SYNOPSIS
 
