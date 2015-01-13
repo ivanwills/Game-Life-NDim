@@ -105,7 +105,7 @@ __END__
 
 =head1 NAME
 
-Game::Life::NDim::Dim - The dimesion of a board?
+Game::Life::NDim::Dim - The dimension of a board?
 
 =head1 VERSION
 

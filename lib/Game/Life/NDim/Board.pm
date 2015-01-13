@@ -255,7 +255,7 @@ __END__
 
 =head1 NAME
 
-Game::Life::NDim::Board - Object representing the borad
+Game::Life::NDim::Board - Object representing the board
 
 =head1 VERSION
 
