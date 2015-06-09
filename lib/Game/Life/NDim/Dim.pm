@@ -19,7 +19,7 @@ use overload
     '=='  => sub { for (0..@{$_->[0]}-1) { return 0 if $_[0][$_] != $_[1][$_] } return 1 },
     '+'   => \&sum_list;
 
-our $VERSION     = version->new('0.0.2');
+our $VERSION     = version->new('0.0.3');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 
@@ -109,7 +109,7 @@ Game::Life::NDim::Dim - The dimension of a board?
 
 =head1 VERSION
 
-This documentation refers to Game::Life::NDim::Dim version 0.0.2.
+This documentation refers to Game::Life::NDim::Dim version 0.0.3.
 
 
 =head1 SYNOPSIS

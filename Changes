@@ -1,5 +1,12 @@
 Revision history for Game-Life-NDim
 
+0.0.3   2015-06-09
+        Updating for release of version 0.0.3
+        Set Test::More minimum version (Ivan Wills)
+        Removed unneeded tag (Ivan Wills)
+        removed travis testing perl 5.8 (Ivan Wills)
+        Added config for coveralls.io (Ivan Wills)
+
 0.0.2   2015-01-13
         Updating for release of version 0.0.2
         Updated License (Ivan Wills)

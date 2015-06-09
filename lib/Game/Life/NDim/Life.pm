@@ -16,7 +16,7 @@ use List::Util qw/sum max min/;
 
 use overload '""' => \&to_string;
 
-our $VERSION     = version->new('0.0.2');
+our $VERSION     = version->new('0.0.3');
 our @EXPORT_OK   = qw//;
 our %EXPORT_TAGS = ();
 #our @EXPORT      = qw//;
@@ -177,7 +177,7 @@ Game::Life::NDim::Life - Object representing a life
 
 =head1 VERSION
 
-This documentation refers to Game::Life::NDim::Life version 0.0.2.
+This documentation refers to Game::Life::NDim::Life version 0.0.3.
 
 
 =head1 SYNOPSIS
