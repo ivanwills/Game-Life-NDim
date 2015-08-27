@@ -21,7 +21,6 @@ my $builder = Module::Build->new(
         'Test::Warn'       => 0,
     },
     add_to_cleanup     => [ 'Game-Life-NDim-*' ],
-    create_makefile_pl => 'traditional',
     create_license     => 1,
     meta_merge         => {
         resources => {
